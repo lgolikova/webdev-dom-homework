@@ -124,13 +124,11 @@
       commentsArr.push(newComment);
       name.value = '';
       comment.value = '';
-      if (errorMessage) {
+      if (form.contains(errorMessage)) {
         form.removeChild(errorMessage);
       }
-      console.log(commentsArr);
+      renderComments();
     }
-
-    renderComments();
   }
   )
 
