@@ -97,6 +97,7 @@
 
     comments.innerHTML = commentsHtml;
     likeFunction();
+    replyToComment();
   }
 
   renderComments();
@@ -120,7 +121,7 @@
     if (name.value === '' || comment.value === '') {
       form.appendChild(errorMessage);
     } else {
-      const newComment = { userName: name.value, userComment: comment.value, userDate: userDate, likesAmount: 0, isLiked: false };
+      const newComment = { userName: name.value.replaceAll("<", "&lt;").replaceAll(">", "&gt;"), userComment: comment.value.replaceAll("<", "&lt;").replaceAll(">", "&gt;"), userDate: userDate, likesAmount: 0, isLiked: false };
       commentsArr.push(newComment);
       name.value = '';
       comment.value = '';
@@ -128,6 +129,7 @@
         form.removeChild(errorMessage);
       }
       renderComments();
+
     }
   }
   )
@@ -137,7 +139,8 @@
   function likeFunction() {
     const likeBtns = document.querySelectorAll(".like-button");
     for (const likeBtn of likeBtns) {
-      likeBtn.addEventListener("click", () => {
+      likeBtn.addEventListener("click", (event) => {
+        event.stopPropagation();
         const index = likeBtn.dataset.index;
         const comment = commentsArr[index];
 
@@ -153,6 +156,23 @@
     }
   }
 
+
+  //Цитирование (клик на комментарий)
+  function replyToComment() {
+    const anotherComments = document.querySelectorAll(".comment");
+
+    anotherComments.forEach((anotherComment, index, anotherComments) => {
+      anotherComment.addEventListener("click", () => {
+        const currentCommentIndex = index;
+        const quoteMessage = commentsArr[currentCommentIndex].userComment;
+        const quoteUserName = commentsArr[currentCommentIndex].userName;
+        const quoteDate = commentsArr[currentCommentIndex].userDate;
+
+        comment.value = `<<< ${quoteUserName} писал(а) ${quoteDate}:\n "${quoteMessage}"<<< `;
+
+      })
+    })
+  }
 
 
 </script>
