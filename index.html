@@ -1,180 +1,35 @@
 <!DOCTYPE html>
 <html lang="ru">
+    <head>
+        <title>Проект "Комменты"</title>
+        <meta charset="utf-8">
+        <link rel="stylesheet" href="styles.css">
+        <link rel="shortcut icon" href="favicon.ico" type="image/x-icon">
+    </head>
 
-<head>
-  <title>Проект "Комменты"</title>
-  <meta charset="utf-8">
-  <link rel="stylesheet" href="styles.css">
-</head>
-
-<body>
-  <div class="container">
-    <ul class="comments">
-      <!-- <li class="comment">
-        <div class="comment-header">
-          <div>Глеб Фокин</div>
-          <div>12.02.22 12:18</div>
+    <body>
+        <div class="container">
+            <ul class="comments"></ul>
+            <div class="add-form">
+                <input
+                    type="text"
+                    class="add-form-name"
+                    placeholder="Введите ваше имя"
+                >
+                <textarea
+                    type="textarea"
+                    class="add-form-text"
+                    placeholder="Введите ваш коментарий"
+                    rows="4"
+                ></textarea>
+                <div class="add-form-row">
+                    <button type="button" class="add-form-button">
+                        Написать
+                    </button>
+                </div>
+            </div>
         </div>
-        <div class="comment-body">
-          <div class="comment-text">
-            Это будет первый комментарий на этой странице
-          </div>
-        </div>
-        <div class="comment-footer">
-          <div class="likes">
-            <span class="likes-counter">3</span>
-            <button class="like-button"></button>
-          </div>
-        </div>
-      </li>
-      <li class="comment">
-        <div class="comment-header">
-          <div>Варвара Н.</div>
-          <div>13.02.22 19:22</div>
-        </div>
-        <div class="comment-body">
-          <div class="comment-text">
-            Мне нравится как оформлена эта страница! ❤
-          </div>
-        </div>
-        <div class="comment-footer">
-          <div class="likes">
-            <span class="likes-counter">75</span>
-            <button class="like-button -active-like"></button>
-          </div>
-        </div>
-      </li> -->
-    </ul>
-    <div class="add-form">
-      <input type="text" class="add-form-name" placeholder="Введите ваше имя">
-      <textarea type="textarea" class="add-form-text" placeholder="Введите ваш коментарий" rows="4"></textarea>
-      <div class="add-form-row">
-        <button type="button" class="add-form-button">Написать</button>
-      </div>
-    </div>
-  </div>
-</body>
 
-<script>
-  "use strict";
-
-  const commentsArr = [
-    { userName: "Глеб Фокин", userComment: "Это будет первый комментарий на этой странице", userDate: "12.02.22 12:18", likesAmount: 3, isLiked: false },
-    { userName: "Варвара Н.", userComment: "Мне нравится как оформлена эта страница! ❤", userDate: "13.02.22 19:22", likesAmount: 75, isLiked: true }
-  ];
-
-  const name = document.querySelector(".add-form-name");
-  const comment = document.querySelector(".add-form-text");
-  const btn = document.querySelector(".add-form-button");
-  const comments = document.querySelector(".comments");
-
-  const errorMessage = document.createElement('div');
-  errorMessage.textContent = 'Не указано имя или текст комментария';
-  errorMessage.style.color = 'red';
-  const form = document.querySelector(".add-form");
-
-
-  const renderComments = () => {
-    const commentsHtml = commentsArr.map((comment, index) => {
-      return `<li class="comment">
-        <div class="comment-header">
-          <div>${comment.userName}</div>
-          <div>${comment.userDate}</div>
-        </div>
-        <div class="comment-body">
-          <div class="comment-text">
-            ${comment.userComment}
-          </div>
-        </div>
-        <div class="comment-footer">
-          <div class="likes">
-            <span class="likes-counter">${comment.likesAmount}</span>
-            <button class="${comment.isLiked ? "like-button -active-like" : "like-button"}" data-index="${index}"></button>
-          </div>
-        </div>
-      </li>`
-    }).join("");
-
-    comments.innerHTML = commentsHtml;
-    likeFunction();
-    replyToComment();
-  }
-
-  renderComments();
-
-
-  // Добавление комментария (через форму)
-  btn.addEventListener('click', () => {
-    const date = new Date();
-    const timeOptions = {
-      hour: '2-digit',
-      minute: '2-digit'
-    };
-    const dateOptions = {
-      day: '2-digit',
-      month: '2-digit',
-      year: '2-digit'
-    };
-
-    const userDate = `${date.toLocaleDateString('ru-RU', dateOptions)} ${date.toLocaleTimeString('ru-RU', timeOptions)}`;
-
-    if (name.value === '' || comment.value === '') {
-      form.appendChild(errorMessage);
-    } else {
-      const newComment = { userName: name.value.replaceAll("<", "&lt;").replaceAll(">", "&gt;"), userComment: comment.value.replaceAll("<", "&lt;").replaceAll(">", "&gt;"), userDate: userDate, likesAmount: 0, isLiked: false };
-      commentsArr.push(newComment);
-      name.value = '';
-      comment.value = '';
-      if (form.contains(errorMessage)) {
-        form.removeChild(errorMessage);
-      }
-      renderComments();
-
-    }
-  }
-  )
-
-
-  //Обработка лайков
-  function likeFunction() {
-    const likeBtns = document.querySelectorAll(".like-button");
-    for (const likeBtn of likeBtns) {
-      likeBtn.addEventListener("click", (event) => {
-        event.stopPropagation();
-        const index = likeBtn.dataset.index;
-        const comment = commentsArr[index];
-
-        if (comment.isLiked) {
-          comment.likesAmount--;
-        } else {
-          comment.likesAmount++;
-        }
-        comment.isLiked = !comment.isLiked;
-
-        renderComments();
-      })
-    }
-  }
-
-
-  //Цитирование (клик на комментарий)
-  function replyToComment() {
-    const anotherComments = document.querySelectorAll(".comment");
-
-    anotherComments.forEach((anotherComment, index, anotherComments) => {
-      anotherComment.addEventListener("click", () => {
-        const currentCommentIndex = index;
-        const quoteMessage = commentsArr[currentCommentIndex].userComment;
-        const quoteUserName = commentsArr[currentCommentIndex].userName;
-        const quoteDate = commentsArr[currentCommentIndex].userDate;
-
-        comment.value = `<<< ${quoteUserName} писал(а) ${quoteDate}:\n "${quoteMessage}"<<< `;
-
-      })
-    })
-  }
-
-
-</script>
-
+        <script type="module" src="./index.js"></script>
+    </body>
 </html>
