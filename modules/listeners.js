@@ -1,6 +1,8 @@
 import { commentsArr } from './commentsArr.js';
 import { renderComments } from './renderComments.js';
 import { validateComment } from './validation.js';
+import { postComment, loadComments } from './api.js';
+
 const comment = document.querySelector('.add-form-text');
 
 //Обработка лайков
@@ -40,7 +42,7 @@ function replyToComment() {
     });
 }
 
-// Добавление комментария (через форму)
+// Отправка комментария
 function sendComment() {
     const formName = document.querySelector('.add-form-name');
     const btn = document.querySelector('.add-form-button');
@@ -51,41 +53,26 @@ function sendComment() {
     errorMessage.style.color = 'red';
 
     btn.addEventListener('click', () => {
-        const date = new Date();
-        const timeOptions = {
-            hour: '2-digit',
-            minute: '2-digit',
-        };
-        const dateOptions = {
-            day: '2-digit',
-            month: '2-digit',
-            year: '2-digit',
-        };
-
-        const userDate = `${date.toLocaleDateString('ru-RU', dateOptions)} ${date.toLocaleTimeString('ru-RU', timeOptions)}`;
-
         if (formName.value === '' || comment.value === '') {
             if (!form.contains(errorMessage)) {
                 form.appendChild(errorMessage);
             }
         } else {
-            const newComment = {
-                userName: validateComment(formName),
-                userComment: validateComment(comment),
-                userDate: userDate,
-                likesAmount: 0,
-                isLiked: false,
-            };
-            commentsArr.push(newComment);
+            const name = validateComment(formName);
+            const text = validateComment(comment);
 
-            formName.value = '';
-            comment.value = '';
-
-            if (form.contains(errorMessage)) {
-                form.removeChild(errorMessage);
-            }
-
-            renderComments();
+            postComment(name, text)
+                .then(() => {
+                    return loadComments();
+                })
+                .then(() => {
+                    formName.value = '';
+                    comment.value = '';
+                    if (form.contains(errorMessage)) {
+                        form.removeChild(errorMessage);
+                    }
+                })
+                .catch((err) => console.error(err));
         }
     });
 }
