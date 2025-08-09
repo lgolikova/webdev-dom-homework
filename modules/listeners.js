@@ -63,7 +63,7 @@ function sendComment() {
 
             postComment(name, text)
                 .then(() => {
-                    return loadComments(); // Загружаем обновлённый список
+                    return loadComments();
                 })
                 .then(() => {
                     formName.value = '';
@@ -76,6 +76,5 @@ function sendComment() {
         }
     });
 }
-
 
 export { likeFunction, replyToComment, sendComment };

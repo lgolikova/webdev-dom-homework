@@ -11,7 +11,13 @@ export const loadComments = () => {
             const apiComments = data.comments.map((comment) => ({
                 userName: comment.author.name,
                 userComment: comment.text,
-                userDate: new Date(comment.date),
+                userDate: new Date(comment.date).toLocaleString('ru-RU', {
+                    day: '2-digit',
+                    month: '2-digit',
+                    year: '2-digit',
+                    hour: '2-digit',
+                    minute: '2-digit',
+                }),
                 likesAmount: comment.likes,
                 isLiked: comment.isLiked,
             }));
