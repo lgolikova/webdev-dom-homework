@@ -9,6 +9,7 @@ export const loadComments = () => {
         .then((result) => result.json())
         .then((data) => {
             const apiComments = data.comments.map((comment) => ({
+                id: comment.id,
                 userName: comment.author.name,
                 userComment: comment.text,
                 userDate: new Date(comment.date).toLocaleString('ru-RU', {
