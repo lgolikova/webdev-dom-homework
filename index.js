@@ -1,5 +1,5 @@
-import { renderComments } from './modules/renderComments.js';
+import { loadComments } from './modules/api.js';
 import { sendComment } from './modules/listeners.js';
 
-renderComments();
+loadComments();
 sendComment();
