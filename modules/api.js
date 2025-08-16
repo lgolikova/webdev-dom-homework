@@ -5,6 +5,12 @@ const user_key = 'lgolikova';
 const api_url = `https://wedev-api.sky.pro/api/v1/${user_key}/comments`;
 
 export const loadComments = () => {
+    const form = document.querySelector('.add-form');
+    const comments = document.querySelector('.comments');
+
+    // form.style.display = 'none';
+    comments.innerHTML = '<h1>Данные загружаются...</h1>';
+
     return fetch(api_url)
         .then((result) => result.json())
         .then((data) => {
@@ -24,6 +30,7 @@ export const loadComments = () => {
             }));
             setCommentsArr(apiComments);
             renderComments();
+            form.style.display = 'flex';
         })
         .catch((error) => console.error('Ошибка загрузки:', error));
 };
@@ -34,12 +41,13 @@ export const postComment = (name, text) => {
         body: JSON.stringify({ name, text }),
     }).then((result) => {
         if (result.status === 400) {
-            return result.json().then((err) => {
-                alert(err.error);
-                throw new Error(err.error);
-            });
+            return result
+                .json()
+                .then((err) => Promise.reject(new Error(err.error)));
         }
-        if (!result.ok) throw new Error('Ошибка при отправке');
+        if (!result.ok) {
+            return Promise.reject(new Error('Ошибка при отправке'));
+        }
         return result.json();
     });
 };
