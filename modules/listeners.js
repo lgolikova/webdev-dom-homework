@@ -6,22 +6,37 @@ import { postComment, loadComments } from './api.js';
 const comment = document.querySelector('.add-form-text');
 
 //Обработка лайков
+function delay(interval = 300) {
+    return new Promise((resolve) => {
+        setTimeout(resolve, interval);
+    });
+}
+
 function likeFunction() {
     const likeBtns = document.querySelectorAll('.like-button');
+
     for (const likeBtn of likeBtns) {
         likeBtn.addEventListener('click', (event) => {
             event.stopPropagation();
             const index = likeBtn.dataset.index;
             const comment = commentsArr[index];
 
-            if (comment.isLiked) {
-                comment.likesAmount--;
-            } else {
-                comment.likesAmount++;
-            }
-            comment.isLiked = !comment.isLiked;
+            if (comment.isLikeLoading) return;
 
+            comment.isLikeLoading = true;
             renderComments();
+
+            delay(1000).then(() => {
+                if (comment.isLiked) {
+                    comment.likesAmount--;
+                } else {
+                    comment.likesAmount++;
+                }
+                comment.isLiked = !comment.isLiked;
+                comment.isLikeLoading = false;
+
+                renderComments();
+            });
         });
     }
 }
