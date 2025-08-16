@@ -53,32 +53,33 @@ function sendComment() {
     errorMessage.style.color = 'red';
 
     btn.addEventListener('click', () => {
-        if (formName.value === '' || comment.value === '') {
+        if (!formName.value || !comment.value) {
             if (!form.contains(errorMessage)) {
                 form.appendChild(errorMessage);
             }
-        } else {
-            const name = validateComment(formName);
-            const text = validateComment(comment);
-
-            btn.disabled = true;
-            btn.textContent = 'Отправка комментария...';
-
-            postComment(name, text)
-                .then(() => {
-                    return loadComments();
-                })
-                .then(() => {
-                    btn.disabled = false;
-                    btn.textContent = 'Написать';
-                    formName.value = '';
-                    comment.value = '';
-                    if (form.contains(errorMessage)) {
-                        form.removeChild(errorMessage);
-                    }
-                })
-                .catch((err) => console.error(err));
+            return;
         }
+        const name = validateComment(formName);
+        const text = validateComment(comment);
+
+        const loadingMessage = document.createElement('h1');
+        loadingMessage.textContent = 'Комментарий добавляется...';
+        form.style.display = 'none';
+        form.parentNode.insertBefore(loadingMessage, form);
+        loadingMessage.style.marginTop = '30px';
+
+        postComment(name, text)
+            .then(() => loadComments())
+            .then(() => {
+                form.style.display = 'flex';
+                loadingMessage.remove();
+                formName.value = '';
+                comment.value = '';
+                if (form.contains(errorMessage)) {
+                    form.removeChild(errorMessage);
+                }
+            })
+            .catch((err) => console.error(err));
     });
 }
 
