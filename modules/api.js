@@ -8,7 +8,7 @@ export const loadComments = () => {
     const form = document.querySelector('.add-form');
     const comments = document.querySelector('.comments');
 
-    form.style.display = 'none';
+    // form.style.display = 'none';
     comments.innerHTML = '<h1>Данные загружаются...</h1>';
 
     return fetch(api_url)
