@@ -1,10 +1,17 @@
 import { setCommentsArr } from './commentsArr.js';
 import { renderComments } from './renderComments.js';
+// import { sendComment } from './listeners.js';
 
 const user_key = 'lgolikova';
 const api_url = `https://wedev-api.sky.pro/api/v1/${user_key}/comments`;
 
 export const loadComments = () => {
+    const form = document.querySelector('.add-form');
+    form.style.display = 'none';
+
+    const comments = document.querySelector('.comments');
+    comments.innerHTML = '<h1>Данные загружаются...</h1>';
+
     return fetch(api_url)
         .then((result) => result.json())
         .then((data) => {
@@ -24,6 +31,7 @@ export const loadComments = () => {
             }));
             setCommentsArr(apiComments);
             renderComments();
+            form.style.display = 'flex';
         })
         .catch((error) => console.error('Ошибка загрузки:', error));
 };

@@ -3,6 +3,7 @@ import { replyToComment, likeFunction } from './listeners.js';
 
 export const renderComments = () => {
     const comments = document.querySelector('.comments');
+
     const commentsHtml = commentsArr
         .map((comment, index) => {
             return `<li class="comment">

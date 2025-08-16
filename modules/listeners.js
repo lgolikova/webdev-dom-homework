@@ -61,11 +61,16 @@ function sendComment() {
             const name = validateComment(formName);
             const text = validateComment(comment);
 
+            btn.disabled = true;
+            btn.textContent = 'Отправка комментария...';
+
             postComment(name, text)
                 .then(() => {
                     return loadComments();
                 })
                 .then(() => {
+                    btn.disabled = false;
+                    btn.textContent = 'Написать';
                     formName.value = '';
                     comment.value = '';
                     if (form.contains(errorMessage)) {
