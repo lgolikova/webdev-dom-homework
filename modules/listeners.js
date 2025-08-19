@@ -6,22 +6,37 @@ import { postComment, loadComments } from './api.js';
 const comment = document.querySelector('.add-form-text');
 
 //Обработка лайков
+function delay(interval = 300) {
+    return new Promise((resolve) => {
+        setTimeout(resolve, interval);
+    });
+}
+
 function likeFunction() {
     const likeBtns = document.querySelectorAll('.like-button');
+
     for (const likeBtn of likeBtns) {
         likeBtn.addEventListener('click', (event) => {
             event.stopPropagation();
             const index = likeBtn.dataset.index;
             const comment = commentsArr[index];
 
-            if (comment.isLiked) {
-                comment.likesAmount--;
-            } else {
-                comment.likesAmount++;
-            }
-            comment.isLiked = !comment.isLiked;
+            if (comment.isLikeLoading) return;
 
+            comment.isLikeLoading = true;
             renderComments();
+
+            delay(1000).then(() => {
+                if (comment.isLiked) {
+                    comment.likesAmount--;
+                } else {
+                    comment.likesAmount++;
+                }
+                comment.isLiked = !comment.isLiked;
+                comment.isLikeLoading = false;
+
+                renderComments();
+            });
         });
     }
 }
@@ -53,27 +68,33 @@ function sendComment() {
     errorMessage.style.color = 'red';
 
     btn.addEventListener('click', () => {
-        if (formName.value === '' || comment.value === '') {
+        if (!formName.value || !comment.value) {
             if (!form.contains(errorMessage)) {
                 form.appendChild(errorMessage);
             }
-        } else {
-            const name = validateComment(formName);
-            const text = validateComment(comment);
-
-            postComment(name, text)
-                .then(() => {
-                    return loadComments();
-                })
-                .then(() => {
-                    formName.value = '';
-                    comment.value = '';
-                    if (form.contains(errorMessage)) {
-                        form.removeChild(errorMessage);
-                    }
-                })
-                .catch((err) => console.error(err));
+            return;
         }
+        const name = validateComment(formName);
+        const text = validateComment(comment);
+
+        const loadingMessage = document.createElement('h1');
+        loadingMessage.textContent = 'Комментарий добавляется...';
+        form.style.display = 'none';
+        form.parentNode.insertBefore(loadingMessage, form);
+        loadingMessage.style.marginTop = '30px';
+
+        postComment(name, text)
+            .then(() => loadComments())
+            .then(() => {
+                form.style.display = 'flex';
+                loadingMessage.remove();
+                formName.value = '';
+                comment.value = '';
+                if (form.contains(errorMessage)) {
+                    form.removeChild(errorMessage);
+                }
+            })
+            .catch((err) => console.error(err));
     });
 }
 
