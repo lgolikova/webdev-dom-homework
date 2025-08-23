@@ -73,7 +73,11 @@ function sendComment() {
                 form.appendChild(errorMessage);
             }
             return;
+        } else if (formName.value.trim().length < 3 || comment.value.trim().length < 3) {
+            alert('Имя и комментарий должны быть не короче 3 символов');
+            return;
         }
+
         const name = validateComment(formName);
         const text = validateComment(comment);
 
@@ -84,17 +88,27 @@ function sendComment() {
         loadingMessage.style.marginTop = '30px';
 
         postComment(name, text)
-            .then(() => loadComments())
             .then(() => {
-                form.style.display = 'flex';
-                loadingMessage.remove();
                 formName.value = '';
                 comment.value = '';
                 if (form.contains(errorMessage)) {
                     form.removeChild(errorMessage);
                 }
+                return loadComments();
             })
-            .catch((err) => console.error(err));
+            .then(() => {
+                form.style.display = 'flex';
+                loadingMessage.remove();
+            })
+            .catch((error) =>  {
+                if (error.message === 'Failed to fetch') {
+                    alert('Кажется, у вас сломался интернет, попробуйте позже');
+                } else {
+                alert(error.message);
+                }
+                form.style.display = 'flex';
+                loadingMessage.remove();
+            });
     });
 }
 

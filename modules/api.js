@@ -8,11 +8,15 @@ export const loadComments = () => {
     const form = document.querySelector('.add-form');
     const comments = document.querySelector('.comments');
 
-    // form.style.display = 'none';
     comments.innerHTML = '<h1>Данные загружаются...</h1>';
 
     return fetch(api_url)
-        .then((result) => result.json())
+        .then((result) => {
+            if (result.status === 500) {
+                throw new Error('Сервер сломался, попробуйте позже');
+            }
+            return result.json()
+        })
         .then((data) => {
             const apiComments = data.comments.map((comment) => ({
                 id: comment.id,
@@ -32,22 +36,36 @@ export const loadComments = () => {
             renderComments();
             form.style.display = 'flex';
         })
-        .catch((error) => console.error('Ошибка загрузки:', error));
+        .catch((error) =>  {
+            if (error.message === 'Failed to fetch') {
+                alert('Кажется, у вас сломался интернет, попробуйте позже');
+            } else {
+            alert(error.message);
+            }
+        });
 };
 
 export const postComment = (name, text) => {
     return fetch(api_url, {
         method: 'POST',
-        body: JSON.stringify({ name, text }),
-    }).then((result) => {
+        body: JSON.stringify({ name, text, forceError: true, }),
+    })
+    .then((result) => {
+        if (result.status === 500) {
+            throw new Error('Сервер сломался, попробуйте позже');
+        }
         if (result.status === 400) {
-            return result
-                .json()
-                .then((err) => Promise.reject(new Error(err.error)));
+            throw new Error('Неверные данные для комментария');
         }
         if (!result.ok) {
-            return Promise.reject(new Error('Ошибка при отправке'));
+            throw new Error('Ошибка при отправке комментария');
         }
         return result.json();
     });
+    // .then((data) => {
+    //     return data;
+    // })
+    // .catch((error) => {
+    //     alert(error.message);
+    // });
 };
