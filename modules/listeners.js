@@ -62,6 +62,7 @@ function sendComment() {
     const formName = document.querySelector('.add-form-name');
     const btn = document.querySelector('.add-form-button');
     const form = document.querySelector('.add-form');
+    const comment = document.querySelector('.add-form-text');
 
     const errorMessage = document.createElement('div');
     errorMessage.textContent = 'Не указано имя или текст комментария';
