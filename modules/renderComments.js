@@ -1,7 +1,7 @@
 import { commentsArr } from './commentsArr.js';
 import { replyToComment, likeFunction } from './listeners.js';
 import { renderLogin } from './renderLogin.js';
-import {token, name} from './api.js'
+import {token, name, loadComments} from './api.js'
 
 export const renderComments = () => {
     const container = document.querySelector('.container');
@@ -65,6 +65,7 @@ export const renderComments = () => {
     if(token) {
     likeFunction();
     replyToComment();
+    loadComments();
     } else {
         document.querySelector('.link-login').addEventListener('click', () => {
             renderLogin();
