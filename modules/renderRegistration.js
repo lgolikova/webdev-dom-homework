@@ -19,7 +19,8 @@ export const renderRegistration = () => {
     </section>
     `
     container.innerHTML = loginHtml;
-    document.querySelector('.container .add-form').style.display = 'flex';
+    document.querySelector('.add-form').style.display = 'flex';
+    document.querySelector('.add-form').style.alignItems = 'center'
 
     document.querySelector('.entry').addEventListener('click', () => {
         renderLogin();

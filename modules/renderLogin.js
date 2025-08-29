@@ -19,6 +19,7 @@ export const renderLogin = () => {
     `
     container.innerHTML = loginHtml;
     document.querySelector('.add-form').style.display = 'flex';
+    document.querySelector('.add-form').style.alignItems = 'center'
 
     document.querySelector('.registry').addEventListener('click', () => {
         renderRegistration();

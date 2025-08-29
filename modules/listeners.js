@@ -84,7 +84,7 @@ function sendComment() {
         const name = validateComment(formName);
         const text = validateComment(comment);
 
-        const loadingMessage = document.createElement('h1');
+        const loadingMessage = document.createElement('h2');
         loadingMessage.textContent = 'Комментарий добавляется...';
         form.style.display = 'none';
         form.parentNode.insertBefore(loadingMessage, form);

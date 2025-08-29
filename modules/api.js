@@ -91,12 +91,19 @@ export const postComment = (text) => {
     });
 };
 
-
 export const login = (login, password) => {
     return fetch(auth_url + '/login', {
         method: 'POST',
         body: JSON.stringify({ login: login, password: password})
-    }).then(response => response.json());
+    })
+    .then(response => {
+        if (!response.ok) {
+            return response.json().then(data => {
+                throw new Error(data.message || 'Ошибка при авторизации');
+            });
+        }
+        return response.json();
+    });
 }
 
 export const registration = (name, login, password) => {
