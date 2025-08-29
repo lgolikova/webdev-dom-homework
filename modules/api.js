@@ -11,14 +11,13 @@ export const setToken = (newToken) => {
 }
 
 export let name = '';
-export const setName = (newNAme) => {
+export const setName = (newName) => {
     name = newName;
 }
 
 export const loadComments = () => {
     const form = document.querySelector('.add-form');
-    const comments = document.querySelector('.comments');
-
+    // const comments = document.querySelector('.comments');
     // comments.innerHTML = '<h1>Данные загружаются...</h1>';
 
     return fetch(api_url)
@@ -45,7 +44,9 @@ export const loadComments = () => {
             }));
             setCommentsArr(apiComments);
             renderComments();
-            form.style.display = 'flex';
+            if (form) {
+                form.style.display = 'flex';
+            }
         })
         .catch((error) =>  {
             if (error.message === 'Failed to fetch') {
@@ -56,32 +57,38 @@ export const loadComments = () => {
         });
 };
 
-export const postComment = (name, text) => {
+
+export const postComment = (text) => {
+    if (!text || text.trim().length < 3) {
+        return Promise.reject(new Error('Комментарий должен содержать хотя бы 3 символа'));
+    }
     return fetch(api_url, {
         method: 'POST',
         headers: {
-            Authorization: `Bearer ${token}`
+            'Authorization': `Bearer ${token}`,
+            // "Content-Type": "application/json"
         },
-        body: JSON.stringify({ text, forceError: true, }),
+        body: JSON.stringify({ text }),
     })
     .then((result) => {
         if (result.status === 500) {
             throw new Error('Сервер сломался, попробуйте позже');
         }
+        // if (result.status === 400) {
+        //     throw new Error('Неверные данные для комментария');
+        // }
+
         if (result.status === 400) {
-            throw new Error('Неверные данные для комментария');
+            return result.json().then(data => {
+                throw new Error(data.error || 'Неверные данные для комментария');
+            });
         }
+
         if (!result.ok) {
             throw new Error('Ошибка при отправке комментария');
         }
         return result.json();
     });
-    // .then((data) => {
-    //     return data;
-    // })
-    // .catch((error) => {
-    //     alert(error.message);
-    // });
 };
 
 
@@ -95,7 +102,14 @@ export const login = (login, password) => {
 export const registration = (name, login, password) => {
     return fetch(auth_url, {
         method: 'POST',
-        body: JSON.stringify({ name: name, login: login, password: password})
-    }).then(response => response.json());
+        body: JSON.stringify({ name, login, password })
+    })
+    .then(response => {
+        if (!response.ok) {
+            return response.json().then(errData => {
+                throw new Error(errData.error || 'Ошибка регистрации');
+            });
+        }
+        return response.json();
+    });
 }
-

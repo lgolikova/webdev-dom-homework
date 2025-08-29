@@ -137,7 +137,7 @@ body {
 }
 
 .add-form {
-    display: none;
+    display: flex;
 }
 
 .-loading-like {
@@ -157,4 +157,9 @@ body {
     to {
         transform: rotate(0deg);
     }
+}
+
+.link-login {
+    cursor: pointer;
+    text-decoration: underline;
 }

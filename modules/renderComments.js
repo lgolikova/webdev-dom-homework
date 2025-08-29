@@ -1,5 +1,5 @@
 import { commentsArr } from './commentsArr.js';
-import { replyToComment, likeFunction } from './listeners.js';
+import { replyToComment, likeFunction, sendComment } from './listeners.js';
 import { renderLogin } from './renderLogin.js';
 import {token, name, loadComments} from './api.js'
 
@@ -31,7 +31,7 @@ export const renderComments = () => {
     // container.innerHTML = commentsHtml;
 
     const addCommentsHtml = `
-    <ul class="comments"></ul>
+
     <div class="add-form">
         <input
             type="text"
@@ -58,18 +58,19 @@ export const renderComments = () => {
     const linkToLoginText = `<p>Чтобы отправить комментарий, <span class='link-login'>войдите</span></p>`
 
     const baseHtml = `<ul class="comments">${commentsHtml}</ul>
-    ${token ? addCommentsHtml : linkToLoginText}`;
+    ${token ? addCommentsHtml : linkToLoginText}
+    `;
+
 
     container.innerHTML = baseHtml;
 
     if(token) {
     likeFunction();
     replyToComment();
-    loadComments();
+    sendComment();
     } else {
         document.querySelector('.link-login').addEventListener('click', () => {
             renderLogin();
         })
     }
-
-};
+}

@@ -1,5 +1,6 @@
 import { registration, setName, setToken, loadComments } from "./api.js";
 import { renderLogin } from "./renderLogin.js";
+import { renderComments } from "./renderComments.js";
 
 
 export const renderRegistration = () => {
@@ -18,7 +19,7 @@ export const renderRegistration = () => {
     </section>
     `
     container.innerHTML = loginHtml;
-    document.querySelector('.container .add-form').style.display = 'flex'; 
+    document.querySelector('.container .add-form').style.display = 'flex';
 
     document.querySelector('.entry').addEventListener('click', () => {
         renderLogin();
@@ -29,24 +30,15 @@ export const renderRegistration = () => {
     const passwordEl = document.querySelector('#password');
     const submitBtn = document.querySelector('.add-form-button-main');
 
-    // submitBtn.addEventListener('click', () => {
-    //     registration(nameEl.value, loginEl.value, passwordEl.value).then((data) => {
-    //         setToken(data.user.token);
-    //         setName(data.user.name);
-    //         loadComments();
-    //     });
-    // })
-    
     submitBtn.addEventListener('click', () => {
         registration(nameEl.value, loginEl.value, passwordEl.value)
             .then((data) => {
                 setToken(data.user.token);
                 setName(data.user.name);
-                loadComments(); 
+                renderComments();
             })
             .catch((error) => {
                 alert(error.message);
             });
     });
-
 }
