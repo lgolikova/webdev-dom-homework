@@ -1,12 +1,12 @@
 import { commentsArr } from './commentsArr.js';
 import { renderComments } from './renderComments.js';
 import { validateComment } from './validation.js';
-import { postComment, loadComments } from './api.js';
+import { token, postComment, loadComments } from './api.js';
 
 const comment = document.querySelector('.add-form-text');
 
 //Обработка лайков
-function delay(interval = 300) {
+function delay(interval = 1000) {
     return new Promise((resolve) => {
         setTimeout(resolve, interval);
     });
@@ -62,10 +62,13 @@ function sendComment() {
     const formName = document.querySelector('.add-form-name');
     const btn = document.querySelector('.add-form-button');
     const form = document.querySelector('.add-form');
+    const comment = document.querySelector('.add-form-text');
 
     const errorMessage = document.createElement('div');
     errorMessage.textContent = 'Не указано имя или текст комментария';
     errorMessage.style.color = 'red';
+
+    if (!btn) return;
 
     btn.addEventListener('click', () => {
         if (!formName.value || !comment.value) {
@@ -81,13 +84,16 @@ function sendComment() {
         const name = validateComment(formName);
         const text = validateComment(comment);
 
-        const loadingMessage = document.createElement('h1');
+        const loadingMessage = document.createElement('h2');
         loadingMessage.textContent = 'Комментарий добавляется...';
         form.style.display = 'none';
         form.parentNode.insertBefore(loadingMessage, form);
         loadingMessage.style.marginTop = '30px';
 
-        postComment(name, text)
+        console.log("Token:", token);
+        console.log('Text:', text);
+
+        postComment(text)
             .then(() => {
                 formName.value = '';
                 comment.value = '';
